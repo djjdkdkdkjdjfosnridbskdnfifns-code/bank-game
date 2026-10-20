@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏦 БелКристаллБанк</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+body{background:#f0f2f5;color:#1a1a1a;min-height:100vh;overflow-x:hidden;padding-bottom:70px}
+
+/* ДЕМО ПЛАШКА */
+.demo-banner{background:rgba(255,159,28,0.12);border-bottom:1px solid rgba(255,159,28,0.3);color:#d97706;font-size:10px;font-weight:800;text-align:center;padding:6px 10px;letter-spacing:0.5px;text-transform:uppercase;position:sticky;top:0;z-index:9999}
+
+/* ШАПКА */
+.header{background:linear-gradient(135deg,#1e3a8a,#1e40af);color:#fff;padding:20px 20px 30px;border-radius:0 0 24px 24px;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.logo{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:900}
+.logo-icon{background:#fff;color:#1e3a8a;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.user-icon{width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+
+/* БАЛАНС */
+.balance-label{font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:4px}
+.balance-value{font-size:32px;font-weight:900;letter-spacing:-1px}
+.balance-currency{font-size:18px;font-weight:700;margin-left:4px}
+
+/* СЕТКА */
+.container{padding:15px;max-width:500px;margin:0 auto}
+
+/* КАРТА */
+.card{background:linear-gradient(135deg,#1e3a8a,#3b82f6);border-radius:20px;padding:20px;color:#fff;box-shadow:0 10px 25px rgba(30,58,138,0.3);position:relative;overflow:hidden;margin-top:-20px;margin-bottom:20px}
+.card::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,0.1);border-radius:50%}
+.card-chip{width:40px;height:30px;background:linear-gradient(135deg,#fbbf24,#f59e0b);border-radius:6px;margin-bottom:20px;position:relative}
+.card-number{font-size:18px;letter-spacing:2px;font-weight:700;margin-bottom:15px;font-family:monospace}
+.card-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.card-label{font-size:9px;color:rgba(255,255,255,0.7);text-transform:uppercase;margin-bottom:2px}
+.card-val{font-size:13px;font-weight:700}
+
+/* МЕНЮ */
+.menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.menu-item{background:#fff;border-radius:16px;padding:12px 5px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:all .2s}
+.menu-item:active{transform:scale(0.95)}
+.menu-icon{font-size:24px;margin-bottom:6px}
+.menu-label{font-size:10px;font-weight:700;color:#475569}
+
+/* БЛОКИ */
+.block{background:#fff;border-radius:20px;padding:18px;margin-bottom:15px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+.block-title{font-size:16px;font-weight:800;margin-bottom:12px;color:#1e293b;display:flex;align-items:center;gap:6px}
+
+/* СПИСКИ */
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9}
+.list-item:last-child{border-bottom:none}
+.list-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:12px;background:#eff6ff}
+.list-info{flex:1}
+.list-name{font-size:14px;font-weight:700;color:#1e293b}
+.list-desc{font-size:11px;color:#94a3b8;margin-top:2px}
+.list-price{font-size:14px;font-weight:800;color:#1e3a8a}
+
+/* КНОПКИ */
+button{background:#1e3a8a;color:#fff;border:none;height:44px;font-size:14px;font-weight:700;border-radius:12px;cursor:pointer;width:100%;margin-top:8px;transition:all .15s}
+button:active{transform:scale(0.97)}
+button:disabled{background:#e2e8f0;color:#94a3b8;cursor:not-allowed}
+button.green{background:linear-gradient(135deg,#22c55e,#16a34a)}
+button.red{background:linear-gradient(135deg,#ef4444,#dc2626)}
+
+/* НИЖНЕЕ МЕНЮ */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;box-shadow:0 -4px 15px rgba(0,0,0,0.05)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:6px;background:none;border:none;color:#94a3b8;font-size:10px;font-weight:700;cursor:pointer;margin:0;height:auto;box-shadow:none}
+.nav-btn .nav-icon{font-size:20px;margin-bottom:3px}
+.nav-btn.active{color:#1e3a8a}
+
+/* ЭКРАНЫ */
+.screen{display:none;animation:fadeIn .3s}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* МОДАЛКИ */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:10000;padding:20px;backdrop-filter:blur(4px)}
+.modal.active{display:flex}
+.modal-box{background:#fff;border-radius:20px;padding:24px;max-width:400px;width:100%;text-align:center}
+.modal-title{font-size:20px;font-weight:900;margin-bottom:12px;color:#1e293b}
+.modal-text{font-size:14px;color:#64748b;line-height:1.5;margin-bottom:20px}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;z-index:10001;font-size:14px;max-width:90%;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,0.3);animation:toastIn .4s}
+@keyframes toastIn{from{transform:translate(-50%,-100px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+</style>
+</head><body>
+
+<!-- ПЛАШКА -->
+<div class="demo-banner">⚠️ ДЕМО-ВЕРСИЯ · ИГРА · НЕ ЯВЛЯЕТСЯ ФИНАНСОВЫМ ПРИЛОЖЕНИЕМ</div>
+
+<!-- ШАПКА -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">🏦</div>
+      <span>БелКристаллБанк</span>
+    </div>
+    <div class="user-icon" onclick="openProfile()">👤</div>
+  </div>
+  <div class="balance-label">Доступный баланс</div>
+  <div class="balance-value"><span id="balance">0</span><span class="balance-currency">BYN</span></div>
+</div>
+
+<!-- ЭКРАН: ГЛАВНАЯ -->
+<div class="screen active" id="screen-home">
+  <div class="container">
+    <!-- КАРТА -->
+    <div class="card" onclick="openCard()">
+      <div class="card-chip"></div>
+      <div class="card-number" id="card-number">0000 0000 0000 0000</div>
+      <div class="card-bottom">
+        <div>
+          <div class="card-label">Владелец</div>
+          <div class="card-val" id="card-owner">PRESIDENT</div>
+        </div>
+        <div>
+          <div class="card-label">Срок</div>
+          <div class="card-val" id="card-expiry">15/98</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- МЕНЮ -->
+    <div class="menu-grid">
+      <div class="menu-item" onclick="switchScreen('tasks')">
+        <div class="menu-icon">🎯</div>
+        <div class="menu-label">Задания</div>
+      </div>
+      <div class="menu-item" onclick="switchScreen('shop')">
+        <div class="menu-icon">🛒</div>
+        <div class="menu-label">Магазин</div>
+      </div>
+      <div class="menu-item" onclick="switchScreen('friends')">
+        <div class="menu-icon">👥</div>
+        <div class="menu-label">Друзья</div>
+      </div>
+      <div class="menu-item" onclick="switchScreen('history')">
+        <div class="menu-icon">📜</div>
+        <div class="menu-label">История</div>
+      </div>
+    </div>
+
+    <!-- ДОСТИЖЕНИЯ -->
+    <div class="block">
+      <div class="block-title">🏆 Достижения</div>
+      <div id="achievements-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ЭКРАН: ЗАДАНИЯ -->
+<div class="screen" id="screen-tasks">
+  <div class="container">
+    <div class="block">
+      <div class="block-title">🎯 Задания</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:12px">Выполняй задания — получай от 150 до 5000 BYN</p>
+      <div id="tasks-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ЭКРАН: МАГАЗИН -->
+<div class="screen" id="screen-shop">
+  <div class="container">
+    <div class="block">
+      <div class="block-title">🛒 Магазин</div>
+      <div id="shop-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ЭКРАН: ДРУЗЬЯ -->
+<div class="screen" id="screen-friends">
+  <div class="container">
+    <div class="block">
+      <div class="block-title">👥 Друзья</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:12px">Покупай товары у других игроков</p>
+      <div id="friends-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ЭКРАН: ИСТОРИЯ -->
+<div class="screen" id="screen-history">
+  <div class="container">
+    <div class="block">
+      <div class="block-title">📜 История операций</div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- НИЖНЕЕ МЕНЮ -->
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="switchScreen('home',this)" data-screen="home">
+    <span class="nav-icon">🏠</span>
+    <span>Главная</span>
+  </button>
+  <button class="nav-btn" onclick="switchScreen('tasks',this)" data-screen="tasks">
+    <span class="nav-icon">🎯</span>
+    <span>Задания</span>
+  </button>
+  <button class="nav-btn" onclick="switchScreen('shop',this)" data-screen="shop">
+    <span class="nav-icon">🛒</span>
+    <span>Магазин</span>
+  </button>
+  <button class="nav-btn" onclick="switchScreen('friends',this)" data-screen="friends">
+    <span class="nav-icon">👥</span>
+    <span>Друзья</span>
+  </button>
+  <button class="nav-btn" onclick="switchScreen('history',this)" data-screen="history">
+    <span class="nav-icon">📜</span>
+    <span>История</span>
+  </button>
+</div>
+
+<!-- МОДАЛКА ПРОФИЛЯ -->
+<div class="modal" id="profile-modal">
+  <div class="modal-box">
+    <div class="modal-title">👤 Профиль</div>
+    <p class="modal-text" style="text-align:left">
+      <b>Имя:</b> <span id="profile-name">Президент</span><br>
+      <b>Карта:</b> <span id="profile-card">0000</span><br>
+      <b>Баланс:</b> <span id="profile-balance">0</span> BYN<br>
+      <b>Выполнено заданий:</b> <span id="profile-tasks">0</span>
+    </p>
+    <button onclick="regenerateCard()" class="blue">🔄 Новая карта (500 BYN)</button>
+    <button onclick="closeModal('profile-modal')" style="background:#e2e8f0;color:#475569;margin-top:8px">Закрыть</button>
+  </div>
+</div>
+
+<!-- МОДАЛКА КАРТЫ -->
+<div class="modal" id="card-modal">
+  <div class="modal-box">
+    <div class="modal-title">💳 Информация о карте</div>
+    <p class="modal-text" style="text-align:left">
+      <b>Номер:</b> <span id="modal-card-number">—</span><br>
+      <b>Владелец:</b> <span id="modal-card-owner">—</span><br>
+      <b>Срок:</b> <span id="modal-card-expiry">—</span><br>
+      <b>Статус:</b> <span style="color:#22c55e;font-weight:700">Активна</span>
+    </p>
+    <button onclick="closeModal('card-modal')" class="green">ОК</button>
+  </div>
+</div>
+
+<!-- МОДАЛКА ПОКУПКИ -->
+<div class="modal" id="buy-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="buy-title">Покупка</div>
+    <p class="modal-text" id="buy-desc">Описание</p>
+    <div style="font-size:24px;font-weight:900;color:#1e3a8a;margin-bottom:15px" id="buy-price">0 BYN</div>
+    <button onclick="confirmBuy()" class="green">✅ Купить</button>
+    <button onclick="closeModal('buy-modal')" style="background:#e2e8f0;color:#475569;margin-top:8px">Отмена</button>
+  </div>
+</div>
+
+<div id="toast-box"></div><script>
+// ===== СОСТОЯНИЕ =====
+const DEFAULT_STATE = {
+  balance: 1000,
+  cardNumber: '',
+  cardOwner: 'PRESIDENT',
+  cardExpiry: '15/98',
+  profileName: 'Президент',
+  tasksDone: [],
+  history: [],
+  achievements: [],
+  ownedItems: []
+};
+let state = { ...DEFAULT_STATE };
+window.state = state;
+
+function save(){try{localStorage.setItem('belkristall_bank',JSON.stringify(state))}catch(e){}}
+function load(){
+  try{
+    const r = localStorage.getItem('belkristall_bank');
+    if(r) state = { ...DEFAULT_STATE, ...JSON.parse(r) };
+  }catch(e){}
+  window.state = state;
+}
+function fmt(n){return Math.floor(n).toLocaleString('ru-RU')}
+
+// ===== ГЕНЕРАТОР КАРТЫ =====
+function generateCardNumber(){
+  const groups = [];
+  for(let i = 0; i < 4; i++){
+    groups.push(String(Math.floor(1000 + Math.random()*9000)));
+  }
+  return groups.join(' ');
+}
+function generateExpiry(){
+  const month = String(Math.floor(1 + Math.random()*12)).padStart(2,'0');
+  const year = String(95 + Math.floor(Math.random()*40)).padStart(2,'0');
+  return month + '/' + year;
+}
+function initCard(){
+  if(!state.cardNumber){
+    state.cardNumber = generateCardNumber();
+    state.cardExpiry = generateExpiry();
+    save();
+  }
+}
+
+// ===== UI =====
+function updateUI(){
+  document.getElementById('balance').textContent = fmt(state.balance);
+  document.getElementById('card-number').textContent = state.cardNumber;
+  document.getElementById('card-owner').textContent = state.cardOwner;
+  document.getElementById('card-expiry').textContent = state.cardExpiry;
+  document.getElementById('profile-name').textContent = state.profileName;
+  document.getElementById('profile-card').textContent = state.cardNumber.slice(-4);
+  document.getElementById('profile-balance').textContent = fmt(state.balance);
+  document.getElementById('profile-tasks').textContent = state.tasksDone.length;
+}
+
+function switchScreen(name, btn){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if(btn){ btn.classList.add('active'); }
+  else {
+    const target = document.querySelector(`.nav-btn[data-screen="${name}"]`);
+    if(target) target.classList.add('active');
+  }
+  if(name === 'tasks') renderTasks();
+  if(name === 'shop') renderShop();
+  if(name === 'friends') renderFriends();
+  if(name === 'history') renderHistory();
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+
+function toast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+function addHistory(text, amount){
+  state.history.unshift({ text, amount, date: Date.now() });
+  if(state.history.length > 50) state.history.pop();
+  save();
+}
+
+// ===== ПРОФИЛЬ И КАРТА =====
+function openProfile(){
+  updateUI();
+  openModal('profile-modal');
+}
+function openCard(){
+  document.getElementById('modal-card-number').textContent = state.cardNumber;
+  document.getElementById('modal-card-owner').textContent = state.cardOwner;
+  document.getElementById('modal-card-expiry').textContent = state.cardExpiry;
+  openModal('card-modal');
+}
+function regenerateCard(){
+  if(state.balance < 500){ toast('❌ Нужно 500 BYN'); return; }
+  state.balance -= 500;
+  state.cardNumber = generateCardNumber();
+  state.cardExpiry = generateExpiry();
+  addHistory('🔄 Новая карта', -500);
+  updateUI(); save();
+  closeModal('profile-modal');
+  toast('✅ Новая карта создана!');
+}
+
+// ===== ЗАДАНИЯ =====
+const TASKS = [
+  { id:'t1', name:'Новичок', desc:'Нажми на кнопку 10 раз', reward:150, icon:'👆', check:(s)=>s.clickCount>=10, progress:(s)=>`${s.clickCount||0}/10` },
+  { id:'t2', name:'Кликер', desc:'Нажми 50 раз', reward:300, icon:'⚡', check:(s)=>s.clickCount>=50, progress:(s)=>`${s.clickCount||0}/50` },
+  { id:'t3', name:'Проверка карты', desc:'Открой информацию о карте', reward:200, icon:'💳', check:(s)=>s.openedCard, progress:(s)=>s.openedCard?'Готово':'Не открыл' },
+  { id:'t4', name:'Смена карты', desc:'Сгенерируй новую карту', reward:400, icon:'🔄', check:(s)=>s.regeneratedCard, progress:(s)=>s.regeneratedCard?'Готово':'Нет' },
+  { id:'t5', name:'Шопоголик', desc:'Купи что-нибудь в магазине', reward:500, icon:'🛒', check:(s)=>s.ownedItems.length>=1, progress:(s)=>`${s.ownedItems.length}/1` },
+  { id:'t6', name:'Тусовщик', desc:'Открой список друзей', reward:250, icon:'👥', check:(s)=>s.openedFriends, progress:(s)=>s.openedFriends?'Готово':'Нет' },
+  { id:'t7', name:'Историк', desc:'Открой историю операций', reward:150, icon:'📜', check:(s)=>s.openedHistory, progress:(s)=>s.openedHistory?'Готово':'Нет' },
+  { id:'t8', name:'Богач', desc:'Накопи 5000 BYN', reward:1000, icon:'💰', check:(s)=>s.balance>=5000, progress:(s)=>fmt(s.balance)+'/5000' },
+  { id:'t9', name:'Мечтатель', desc:'Накопи 10000 BYN', reward:2500, icon:'🌟', check:(s)=>s.balance>=10000, progress:(s)=>fmt(s.balance)+'/10000' },
+  { id:'t10', name:'Легенда', desc:'Накопи 25000 BYN', reward:5000, icon:'👑', check:(s)=>s.balance>=25000, progress:(s)=>fmt(s.balance)+'/25000' }
+];
+
+function renderTasks(){
+  const el = document.getElementById('tasks-list');
+  el.innerHTML = TASKS.map(t => {
+    const done = state.tasksDone.includes(t.id);
+    const can = !done && t.check(state);
+    return `<div class="list-item">
+      <div class="list-icon">${t.icon}</div>
+      <div class="list-info">
+        <div class="list-name">${done ? '✅' : (can ? '🎁' : '🔒')} ${t.name}</div>
+        <div class="list-desc">${t.desc} · ${t.progress(state)}</div>
+      </div>
+      <button class="mini-btn" onclick="claimTask('${t.id}')" ${can ? '' : 'disabled'} style="width:auto;padding:0 14px;height:34px;font-size:12px;background:${can ? 'linear-gradient(135deg,#22c55e,#16a34a)' : '#e2e8f0'};color:${can ? '#fff' : '#94a3b8'}">${done ? '✅' : (can ? '+' + t.reward : t.reward + ' BYN')}</button>
+    </div>`;
+  }).join('');
+}
+
+function claimTask(id){
+  const t = TASKS.find(x => x.id === id);
+  if(!t || state.tasksDone.includes(id)) return;
+  if(!t.check(state)) return;
+  state.tasksDone.push(id);
+  state.balance += t.reward;
+  addHistory(`🎯 ${t.name}`, t.reward);
+  toast(`✅ +${t.reward} BYN!`);
+  updateUI();
+  renderTasks();
+  save();
+}
+
+// ===== КЛИК-СЧЁТЧИК (для заданий) =====
+state.clickCount = state.clickCount || 0;
+document.body.addEventListener('click', () => {
+  state.clickCount = (state.clickCount || 0) + 1;
+});
+
+// ===== ОТСЛЕЖИВАНИЕ ОТКРЫТИЙ =====
+const _origOpenCard = openCard;
+window.openCard = function(){
+  state.openedCard = true;
+  save();
+  _origOpenCard();
+};
+const _origRegenerate = regenerateCard;
+window.regenerateCard = function(){
+  if(state.balance < 500){ toast('❌ Нужно 500 BYN'); return; }
+  state.balance -= 500;
+  state.cardNumber = generateCardNumber();
+  state.cardExpiry = generateExpiry();
+  state.regeneratedCard = true;
+  addHistory('🔄 Новая карта', -500);
+  updateUI(); save();
+  closeModal('profile-modal');
+  toast('✅ Новая карта!');
+};
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+load();
+initCard();
+updateUI();
+renderTasks();
+</script><script>
+// ===== МАГАЗИН =====
+const SHOP_ITEMS = [
+  { id:'s1', name:'Золотая карта', desc:'Красивая золотая карта', price:1500, icon:'💳', color:'#fbbf24' },
+  { id:'s2', name:'Платиновая карта', desc:'Серая платиновая карта', price:3000, icon:'💎', color:'#94a3b8' },
+  { id:'s3', name:'VIP-статус', desc:'Значок VIP в профиле', price:5000, icon:'👑', color:'#a855f7' },
+  { id:'s4', name:'Смена имени', desc:'Меняй имя в профиле', price:500, icon:'✏️', color:'#3b82f6' },
+  { id:'s5', name:'Буст x2', desc:'Удвоение наград на 1 час', price:2500, icon:'⚡', color:'#f59e0b' },
+  { id:'s6', name:'Скидка 10%', desc:'На все покупки навсегда', price:10000, icon:'🏷️', color:'#22c55e' }
+];
+
+function renderShop(){
+  const el = document.getElementById('shop-list');
+  if(!el) return;
+  el.innerHTML = SHOP_ITEMS.map(item => {
+    const owned = state.ownedItems.includes(item.id);
+    return `<div class="list-item">
+      <div class="list-icon" style="background:${item.color}20;color:${item.color}">${item.icon}</div>
+      <div class="list-info">
+        <div class="list-name">${item.name}${owned ? ' ✅' : ''}</div>
+        <div class="list-desc">${item.desc}</div>
+      </div>
+      <div class="list-price">${owned ? '<span style="color:#22c55e">Куплено</span>' : fmt(item.price) + ' BYN'}</div>
+    </div>`;
+  }).join('') + `<button onclick="openBuyModal()" class="blue" style="margin-top:12px">🛒 Купить товар</button>`;
+}
+
+let pendingBuy = null;
+
+function openBuyModal(){
+  closeModal('buy-modal');
+  const firstUnowned = SHOP_ITEMS.find(i => !state.ownedItems.includes(i.id));
+  if(!firstUnowned){ toast('✅ Всё куплено'); return; }
+  pendingBuy = firstUnowned;
+  document.getElementById('buy-title').textContent = firstUnowned.icon + ' ' + firstUnowned.name;
+  document.getElementById('buy-desc').textContent = firstUnowned.desc;
+  document.getElementById('buy-price').textContent = fmt(firstUnowned.price) + ' BYN';
+  openModal('buy-modal');
+}
+
+function confirmBuy(){
+  if(!pendingBuy) return;
+  if(state.ownedItems.includes(pendingBuy.id)){ closeModal('buy-modal'); return; }
+  if(state.balance < pendingBuy.price){ toast('❌ Мало денег'); return; }
+  state.balance -= pendingBuy.price;
+  state.ownedItems.push(pendingBuy.id);
+  addHistory('🛒 ' + pendingBuy.name, -pendingBuy.price);
+  closeModal('buy-modal');
+  toast('✅ Куплено: ' + pendingBuy.name);
+  updateUI();
+  renderShop();
+  save();
+  pendingBuy = null;
+}
+
+// ===== ДРУЗЬЯ =====
+const FRIENDS = [
+  { name:'Саша', item:'Аватарка 🦊', price:300, icon:'🦊' },
+  { name:'Дима', item:'Скин карты', price:800, icon:'💳' },
+  { name:'Олег', item:'Значок 🤖', price:450, icon:'🤖' },
+  { name:'Аня', item:'Буст x2', price:1200, icon:'⚡' },
+  { name:'Костя', item:'Подарок 🎁', price:600, icon:'🎁' }
+];
+
+function renderFriends(){
+  const el = document.getElementById('friends-list');
+  if(!el) return;
+  el.innerHTML = FRIENDS.map((f,i) => `<div class="list-item">
+    <div class="list-icon" style="background:#eff6ff">${f.icon}</div>
+    <div class="list-info">
+      <div class="list-name">${f.name}</div>
+      <div class="list-desc">${f.item}</div>
+    </div>
+    <button onclick="buyFromFriend(${i})" class="green" style="width:auto;padding:0 14px;height:34px;font-size:12px">${fmt(f.price)} BYN</button>
+  </div>`).join('');
+}
+
+function buyFromFriend(i){
+  const f = FRIENDS[i];
+  if(state.balance < f.price){ toast('❌ Мало денег'); return; }
+  state.balance -= f.price;
+  addHistory('👥 У ' + f.name + ': ' + f.item, -f.price);
+  toast('✅ Куплено у ' + f.name);
+  updateUI();
+  save();
+}
+
+// ===== ИСТОРИЯ =====
+function renderHistory(){
+  const el = document.getElementById('history-list');
+  if(!el) return;
+  if(state.history.length === 0){
+    el.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:20px;font-size:13px">Пока пусто</div>';
+    return;
+  }
+  el.innerHTML = state.history.map(h => {
+    const positive = h.amount >= 0;
+    return `<div class="list-item">
+      <div class="list-info">
+        <div class="list-name">${h.text}</div>
+        <div class="list-desc">${new Date(h.date).toLocaleString('ru-RU')}</div>
+      </div>
+      <div class="list-price" style="color:${positive ? '#22c55e' : '#ef4444'}">${positive ? '+' : ''}${fmt(h.amount)} BYN</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== ОТКРЫТИЕ РАЗДЕЛОВ (для заданий) =====
+const _origSwitch = switchScreen;
+window.switchScreen = function(name, btn){
+  if(name === 'friends'){ state.openedFriends = true; save(); }
+  if(name === 'history'){ state.openedHistory = true; save(); }
+  _origSwitch(name, btn);
+};
+
+// ===== АЧИВКИ (отображение на главной) =====
+function renderAchievements(){
+  const el = document.getElementById('achievements-list');
+  if(!el) return;
+  const achs = [];
+  if(state.tasksDone.length >= 1) achs.push('🥉 Первое задание');
+  if(state.tasksDone.length >= 5) achs.push('🥈 Пять заданий');
+  if(state.tasksDone.length >= 10) achs.push('🥇 Все задания');
+  if(state.balance >= 5000) achs.push('💰 Богач');
+  if(state.balance >= 10000) achs.push('🌟 Мечтатель');
+  if(state.balance >= 25000) achs.push('👑 Легенда');
+  if(state.ownedItems.length >= 3) achs.push('🛒 Шопоголик');
+  if(achs.length === 0){ el.innerHTML = '<span style="color:#94a3b8;font-size:12px">Пока нет</span>'; return; }
+  el.innerHTML = achs.map(a => `<div style="background:#fbbf2420;border:1px solid #fbbf24;color:#b45309;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:700">${a}</div>`).join('');
+}
+
+// Обновляем ачивки при updateUI
+const _origUpdate = updateUI;
+window.updateUI = function(){
+  _origUpdate();
+  renderAchievements();
+};
+
+// ===== ИНИЦИАЛИЗАЦИЯ ЧАСТИ 4 =====
+renderShop();
+renderFriends();
+renderHistory();
+renderAchievements();
+</script>
+</body>
+</html>
